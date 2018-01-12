@@ -1,29 +1,16 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+import { app, BrowserWindow, ipcMain } from "electron"
+import { Client } from "wpilib-nt-client"
 
-const electron = require("electron");
-const wpilib_NT = require("wpilib-nt-client");
-const client = new wpilib_NT.Client();
-
-/** Module to control application life. */
-const app = electron.app;
-
-/** Module to create native browser window.*/
-const BrowserWindow = electron.BrowserWindow;
-
-/** Module for receiving messages from the BrowserWindow */
-const ipc = electron.ipcMain;
+const client = new Client();
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 /**
  * The Main Window of the Program
- * @type {Electron.BrowserWindow}
  * */
-let mainWindow;
+let mainWindow : Electron.BrowserWindow;
 
-
-let connected, ready = false;
+let onConnected : () => void, ready = false;
 function createWindow() {
     // Attempt to connect to the localhost
     client.start((con, err) => {
@@ -31,18 +18,16 @@ function createWindow() {
         if (ready) {
             mainWindow.webContents.send('connected', con);
         }
-        else
-            connected = () => mainWindow.webContents.send('connected', con);
+        else onConnected = () => mainWindow.webContents.send('connected', con);
     });
     // When the script starts running in the window set the ready variable
-    ipc.on('ready', (ev, mesg) => {
+    ipcMain.on('ready', (ev, mesg) => {
         ready = true;
         // Send connection message to the window if if the message is ready
-        if (connected)
-            connected();
+        if (onConnected) onConnected();
     });
     // When the user chooses the address of the bot than try to connect
-    ipc.on('connect', (ev, address, port) => {
+    ipcMain.on('connect', (ev, address, port) => {
         let callback = (connected, err) => {
             mainWindow.webContents.send('connected', connected);
         };
@@ -53,10 +38,10 @@ function createWindow() {
             client.start(callback, address);
         }
     });
-    ipc.on('add', (ev, mesg) => {
+    ipcMain.on('add', (ev, mesg) => {
         client.Assign(mesg.val, mesg.key, (mesg.flags & 1) === 1);
     });
-    ipc.on('update', (ev, mesg) => {
+    ipcMain.on('update', (ev, mesg) => {
         client.Update(mesg.id, mesg.val);
     });
     // Listens to the changes coming from the client
