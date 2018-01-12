@@ -3,8 +3,11 @@
   "productName": "FRCDashBoard",
   "version": "2.1.0",
   "description": "Robot control dashboard boilerplate for FRC.",
-  "main": "src/main.js",
+  "main": "build/main.js",
   "scripts": {
+    "precompile": "rm -r ./build",
+    "compile": "npm run compile:ts",
+    "compile:ts": "tsc --outDir ./build --module commonjs --target es6 ./src/*.ts && cp -r ./src/css ./build && cp -r ./src/components ./build && cp ./src/index.html ./build",
     "start": "electron .",
     "dist": "electron-packager . --out dist/",
     "dist-all": "electron-packager . --out dist/ --all"
