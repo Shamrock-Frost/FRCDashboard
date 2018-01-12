@@ -112,7 +112,7 @@ export class NetworkTables {
      * @param f When the key changes, this function will be called with the following parameters; key: key name for entry, value: value of entry, isNew: If true, the entry has just been created
      * @param immediateNotify If true, the function will be immediately called with the current value of the specified key
      */
-    addKeyListener(key : string, f : (key : string, value : any, isNew : boolean) => void, immediateNotify : boolean) {
+    addKeyListener(key : string, f : (key : string, value : any, isNew : boolean) => void, immediateNotify? : boolean) {
         if (key in this.keyListeners) {
             this.keyListeners[key].push(f);
         }
@@ -147,7 +147,7 @@ export class NetworkTables {
      * @param defaultValue If the key isn’t present in the table, return this instead
      * @returns value of key if present, undefined or defaultValue otherwise
      */
-    getValue(key : string, defaultValue : any) : any {
+    getValue(key : string, defaultValue? : any) : any {
         if (key in this.keys) {
             return this.keys[key].val;
         }
