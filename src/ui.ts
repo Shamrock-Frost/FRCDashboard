@@ -13,18 +13,16 @@ class Timer {
     tick(time : number) {
         // This is an example of how a dashboard could display the remaining time in a match.
         // We assume here that value is an integer representing the number of seconds left.
-        if(time < 0) this.text.innerText = '0:00';
-        else {
-            const minutes = Math.floor(time / 60);
-            const seconds = (time % 60 < 10 ? '0' : '') + time % 60;
-            this.text.innerHTML = `${minutes}:${seconds}`;
-        }
+        time = Math.max(time, 0);
+        const minutes = Math.floor(time / 60);
+        const seconds = (time % 60 < 10 ? '0' : '') + time % 60;
+        this.text.innerHTML = `${minutes}:${seconds}`;
     }
 }
 class RobotState {
-    private text : SVGTextElement;
+    private text : HTMLElement;
     constructor(id : string) {
-        this.text = <any>document.getElementById(id).firstChild;
+        this.text = document.getElementById(id);
     }
 
     logState() {

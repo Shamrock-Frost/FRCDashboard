@@ -88,7 +88,7 @@ export class NetworkTables {
     addRobotConnectionListener(f : (connected : boolean) => any, immediateNotify : boolean) {
         this.connectionListeners.push(f);
         if (immediateNotify)
-            f(connected);
+            f(this.connected);
     }
     
     /**
@@ -159,13 +159,13 @@ export class NetworkTables {
      * @returns null if the robot is not connected, or a string otherwise
      */
     getRobotAddress() : string | null {
-        return connected ? this.robotAddress : null;
+        return this.connected ? this.robotAddress : null;
     }
     /**
      * @returns true if the robot is connected
      */
     isRobotConnected() : boolean {
-        return connected;
+        return this.connected;
     }
     /**
      * Sets the value in NetworkTables. If the websocket is not connected, the value will be discarded.
@@ -181,7 +181,7 @@ export class NetworkTables {
         else {
             ipcRenderer.send('add', { key, val: value, flags: 0 });
         }
-        return connected;
+        return this.connected;
     }
     /**
      * Creates a new empty map (or hashtable) object and returns it. The map is safe to store NetworkTables keys in.
